@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petualangan Penjelajah Siklus Hidup Hewan</title>
+<style>
+:root{--ink:#263329;--green:#245b3d;--gold:#e7b84f;--cream:#fff8e8;--paper:#f5edda;--red:#b94c3e}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:linear-gradient(135deg,#dcebd5,#f8edcf)}
+button{font:inherit;cursor:pointer}.wrap{max-width:1100px;margin:auto;padding:18px}
+.hero{background:linear-gradient(120deg,#174c35dd,#356c43dd),radial-gradient(circle at 80% 20%,#e5c46d,#3d7849);color:white;border:5px solid #d8b45b;border-radius:24px;padding:24px;box-shadow:0 10px 30px #24452d33;position:relative;overflow:hidden}
+.hero:after{content:"✦  🧭  ✦";position:absolute;right:20px;bottom:10px;font-size:34px;opacity:.35}
+.kicker{text-transform:uppercase;letter-spacing:2px;font-size:.75rem;color:#f4d98c;font-weight:800}.hero h1{font-family:Georgia,serif;font-size:clamp(2rem,5vw,3.4rem);line-height:1.04;margin:8px 0}.hero p{max-width:650px;margin:10px 0 0;color:#f8f1df}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.stat{background:#ffffff1c;border:1px solid #ffffff55;border-radius:12px;padding:9px 14px;font-weight:700}
+.panel{background:#fffdf6eF;border:2px solid #e4d4ad;border-radius:20px;padding:18px;margin-top:16px;box-shadow:0 5px 18px #34482a12}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.sectionhead h2{font-family:Georgia,serif;margin:0;color:#28563b}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.island{border:2px dashed #c5ae70;border-radius:17px;background:linear-gradient(#f9f1d9,#e9e0c3);padding:13px;text-align:center;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:.2s}
+.island .emoji{font-size:2.5rem}.island strong{font-family:Georgia,serif}.island small{color:#68705f}.island.active{border:3px solid #2d7149;background:#e2f1d9;box-shadow:0 0 0 4px #2d714922}.island.done{background:#fff1c9;border:2px solid #d6a83e}.island.locked{opacity:.55;filter:grayscale(.7)}.island button{border:0;background:#2b6845;color:white;border-radius:20px;padding:7px 13px;font-weight:700;margin-top:5px}.island button:disabled{background:#8b9388;cursor:not-allowed}
+.game{display:none}.game.show{display:block}.gamehead{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.tag{background:#e8efdF;color:#28563b;padding:7px 12px;border-radius:20px;font-weight:800}
+.instructions{background:#f7f0d9;border-left:5px solid var(--gold);padding:12px 14px;border-radius:10px;margin:14px 0}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:15px}.board h3{margin:0 0 10px;color:#345c3d}
+.cards,.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:white;border:2px solid #ddcfad;border-radius:14px;padding:8px;min-width:0;cursor:grab;box-shadow:0 3px 8px #4b482014;transition:.15s}
+.card:active{cursor:grabbing}.card.selected{outline:4px solid #e6b94e;transform:translateY(-2px)}.card img{width:100%;height:112px;object-fit:cover;border-radius:9px;background:#e7e5d9}.card .name{font-weight:800;text-align:center;margin:7px 0 2px}.card .hint{font-size:.76rem;color:#697264;text-align:center}
+.slot{border:2px dashed #b5a77f;background:#faf6e9;border-radius:14px;min-height:165px;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;text-align:center}
+.slot.over{background:#e8f4df;border-color:#38754a}.slot .num{background:#d9c58d;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:900}.slot .slotlabel{font-size:.8rem;font-weight:800;color:#6c6b54}.slot .placed{font-weight:800;color:#28563b}.slot img{width:100%;height:88px;object-fit:cover;border-radius:8px}
+.slot.correct{border:2px solid #39824e;background:#e8f5e8}.slot.wrong{border:2px solid #c85a4c;background:#fff0eb}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.primary,.secondary{border:0;border-radius:12px;padding:11px 17px;font-weight:800}.primary{background:#286643;color:white}.secondary{background:#eee3c7;color:#54482d}.primary:disabled{opacity:.45;cursor:not-allowed}
+.feedback{min-height:28px;font-weight:800;margin-top:10px}.good{color:#267442}.bad{color:#b83f34}
+.finish{text-align:center;padding:25px}.finish .trophy{font-size:4rem}.finish h2{font-family:Georgia,serif;color:#2a613f;font-size:2rem}
+.note{font-size:.82rem;color:#6c705f;margin-top:12px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#253c2b;color:white;padding:12px 18px;border-radius:30px;box-shadow:0 5px 20px #0003;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1}
+@media(max-width:720px){.map{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr}.card img{height:100px}.slot{min-height:145px}}
+@media(max-width:390px){.wrap{padding:10px}.cards,.slots{gap:7px}.card{padding:6px}.slot{padding:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="kicker">Misi Sains • Kelas 4</div>
+<h1>Petualangan Penjelajah<br>Siklus Hidup Hewan</h1>
+<p>Temukan empat pulau rahasia, susun tahapan kehidupan hewan, dan kumpulkan koin pengetahuan untuk membuka harta karun!</p>
+<div class="stats">
+<div class="stat">⭐ Skor: <span id="totalScore">0</span></div>
+<div class="stat">🗺️ Pulau selesai: <span id="doneCount">0</span>/4</div>
+<div class="stat">🏅 Bintang: <span id="stars">0</span></div>
+</div>
+</header>
+
+<section class="panel" id="mapPanel">
+<div class="sectionhead"><h2>🧭 Peta Harta Karun</h2><span class="tag">Selesaikan berurutan!</span></div>
+<p>Ketuk pulau yang terbuka untuk memulai tantangan. Setiap jawaban benar bernilai 10 poin.</p>
+<div class="map" id="map"></div>
+</section>
+
+<section class="panel game" id="gamePanel">
+<div class="gamehead"><div><div class="kicker" style="color:#a17a27">Tantangan Pulau</div><h2 id="gameTitle" style="margin:4px 0;font-family:Georgia,serif">Pulau</h2></div><div class="tag">Skor pulau: <span id="stageScore">0</span>/40</div></div>
+<div class="instructions">🎯 <b>Misi:</b> Seret kartu gambar dari bank gambar ke kotak urutan yang tepat. Di ponsel, ketuk kartu lalu ketuk kotak tujuan.</div>
+<div class="board">
+<div><h3>🃏 Bank Gambar (acak)</h3><div class="cards" id="cards"></div></div>
+<div><h3>🔐 Urutan Siklus Hidup</h3><div class="slots" id="slots"></div></div>
+</div>
+<div class="feedback" id="feedback" aria-live="polite"></div>
+<div class="actions"><button class="primary" id="checkBtn">Periksa Jawaban</button><button class="secondary" id="resetBtn">Acak Ulang</button><button class="secondary" id="mapBtn">Kembali ke Peta</button></div>
+<p class="note">Foto bersumber dari Wikimedia Commons. Ketersediaan foto memerlukan koneksi internet.</p>
+</section>
+
+<section class="panel finish" id="finishPanel" style="display:none">
+<div class="trophy">🏆</div><h2>Harta Karun Pengetahuan Ditemukan!</h2>
+<p>Hebat! Kamu telah menaklukkan empat pulau siklus hidup hewan.</p>
+<h1 style="font-size:3rem;color:#bd8c24;margin:8px"><span id="finalScore">0</span> / 160</h1>
+<p id="award">Gelar: Penjelajah Pemula</p>
+<button class="primary" onclick="restartAll()">Main Lagi</button>
+</section>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+const stages=[
+{id:"butterfly",name:"Pulau Kupu-Kupu",emoji:"🦋",steps:[
+{name:"Telur",hint:"Telur kecil di daun",q:"butterfly eggs on leaf macro photograph"},
+{name:"Ulat",hint:"Larva pemakan daun",q:"butterfly caterpillar on green leaf macro photograph"},
+{name:"Kepompong (pupa)",hint:"Pupa menggantung",q:"butterfly chrysalis pupa hanging leaf close up photograph"},
+{name:"Kupu-kupu dewasa",hint:"Hewan dewasa bersayap",q:"real butterfly adult on flower photograph"}
+]},
+{id:"fly",name:"Pulau Lalat",emoji:"🪰",steps:[
+{name:"Telur",hint:"Telur lalat berkelompok",q:"housefly eggs macro photograph"},
+{name:"Belatung (larva)",hint:"Larva tanpa kaki",q:"housefly maggots larvae macro photograph"},
+{name:"Pupa",hint:"Pupa berbentuk kapsul",q:"housefly pupae puparium macro photograph"},
+{name:"Lalat dewasa",hint:"Lalat bersayap",q:"common housefly Musca domestica close up photograph"}
+]},
+{id:"mosquito",name:"Pulau Nyamuk",emoji:"🦟",steps:[
+{name:"Telur",hint:"Telur di permukaan air",q:"mosquito eggs water close up photograph"},
+{name:"Jentik-jentik (larva)",hint:"Larva hidup di air",q:"mosquito larva wriggler water macro photograph"},
+{name:"Pupa",hint:"Pupa berbentuk koma di air",q:"mosquito pupa tumbler water macro photograph"},
+{name:"Nyamuk dewasa",hint:"Nyamuk bersayap",q:"adult mosquito close up photograph"}
+]},
+{id:"beetle",name:"Pulau Kumbang",emoji:"🐞",steps:[
+{name:"Telur",hint:"Telur kumbang",q:"beetle eggs macro photograph"},
+{name:"Larva",hint:"Larva kumbang",q:"beetle larva grub macro photograph"},
+{name:"Pupa",hint:"Pupa kumbang",q:"beetle pupa macro photograph"},
+{name:"Kumbang dewasa",hint:"Kumbang dengan sayap keras",q:"adult beetle macro photograph"}
+]}
+];
+let unlocked=0,completed=[false,false,false,false],scores=[0,0,0,0],current=0,placements=[null,null,null,null],selected=null,images={},busy=false;
+const $=id=>document.getElementById(id);
+function say(text,kind){$('feedback').textContent=text;$('feedback').className='feedback '+(kind||'');if('speechSynthesis'in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='id-ID';u.rate=0.94;speechSynthesis.speak(u)}}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+function updateStats(){$('totalScore').textContent=scores.reduce((a,b)=>a+b,0);$('doneCount').textContent=completed.filter(Boolean).length;$('stars').textContent=Math.floor(scores.reduce((a,b)=>a+b,0)/20)}
+function renderMap(){
+$('map').innerHTML='';
+stages.forEach((s,i)=>{let d=document.createElement('div');d.className='island '+(completed[i]?'done':i===unlocked?'active':'locked');let b=document.createElement('button');b.textContent=completed[i]?'Mainkan Lagi':i<=unlocked?'Masuk Pulau':'Terkunci 🔒';b.disabled=i>unlocked;b.onclick=()=>startStage(i);d.innerHTML=`<div class="emoji">${completed[i]?'🏆':s.emoji}</div><strong>${s.name}</strong><small>${completed[i]?'Selesai • '+scores[i]+' poin':i<=unlocked?'Tantangan tersedia':'Selesaikan pulau sebelumnya'}</small>`;d.appendChild(b);$('map').appendChild(d)});
+updateStats();
+}
+async function commonsImage(query){
+const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query+' filetype:bitmap')+'&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=420&format=json&origin=*';
+try{let r=await fetch(url);let j=await r.json();let pages=Object.values(j.query?.pages||{});let p=pages.find(x=>x.imageinfo?.[0]?.thumburl)||pages[0];return p?.imageinfo?.[0]?.thumburl||null}catch(e){return null}
+}
+async function loadStageImages(s){
+await Promise.all(s.steps.map(async(step,i)=>{let key=s.id+i;if(!images[key])images[key]=await commonsImage(step.q)}));
+}
+function startStage(i){
+current=i;placements=[null,null,null,null];selected=null;$('mapPanel').style.display='none';$('finishPanel').style.display='none';$('gamePanel').classList.add('show');$('gameTitle').textContent=stages[i].name;$('stageScore').textContent=scores[i];$('feedback').textContent='';renderGame();loadStageImages(stages[i]).then(()=>renderGame());
+}
+function shuffled(a){let x=[...a];for(let i=x.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function renderGame(){
+let s=stages[current];let cards=$('cards');cards.innerHTML='';
+let used=placements.filter(Boolean).map(x=>x.index);let order=shuffled(s.steps.map((_,i)=>i).filter(i=>!used.includes(i)));
+order.forEach(i=>{let st=s.steps[i],el=document.createElement('div');el.className='card'+(selected===i?' selected':'');el.draggable=true;el.dataset.index=i;let src=images[s.id+i];el.innerHTML=`${src?`<img src="${src}" alt="${st.name}" loading="lazy">`:`<div style="height:112px;display:grid;place-items:center;background:#e7e5d9;border-radius:9px;font-size:2.5rem">${s.emoji}</div>`}<div class="name">${st.name}</div><div class="hint">${st.hint}</div>`;el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(i));selected=i});el.addEventListener('click',()=>{selected=i;renderGame()});cards.appendChild(el)});
+let slots=$('slots');slots.innerHTML='';
+s.steps.forEach((st,pos)=>{let slot=document.createElement('div');slot.className='slot';slot.dataset.pos=pos;let placed=placements[pos];slot.innerHTML=`<div class="num">${pos+1}</div><div class="slotlabel">TAHAP ${pos+1}</div>`;if(placed!==null){let p=s.steps[placed.index],src=images[s.id+placed.index];slot.innerHTML+=`${src?`<img src="${src}" alt="${p.name}">`:`<div style="font-size:2rem">${s.emoji}</div>`}<div class="placed">${p.name}</div>`}else slot.innerHTML+='<div style="color:#a49a7e">Letakkan gambar di sini</div>';
+slot.addEventListener('dragover',e=>{e.preventDefault();slot.classList.add('over')});slot.addEventListener('dragleave',()=>slot.classList.remove('over'));slot.addEventListener('drop',e=>{e.preventDefault();slot.classList.remove('over');placeCard(Number(e.dataTransfer.getData('text/plain')),pos)});slot.addEventListener('click',()=>{if(selected!==null)placeCard(selected,pos)});slots.appendChild(slot)});
+$('stageScore').textContent=scores[current];
+}
+function placeCard(index,pos){
+if(index===undefined||Number.isNaN(index))return;
+let old=placements.findIndex(p=>p&&p.index===index);if(old>=0)placements[old]=null;
+placements[pos]={index};selected=null;renderGame();
+if(index===pos){say('Jawaban benar! Tahap ini tepat.','good')}
+else{say('Jawaban salah. Coba perhatikan kembali urutan siklus hidupnya.','bad')}
+}
+function checkAnswers(){
+if(placements.some(x=>x===null)){say('Lengkapi semua kotak terlebih dahulu.','bad');return}
+let correct=0;placements.forEach((p,i)=>{let slot=$('slots').children[i];if(p.index===i){correct++;slot.classList.add('correct')}else slot.classList.add('wrong')});
+let newScore=correct*10;scores[current]=Math.max(scores[current],newScore);$('stageScore').textContent=scores[current];updateStats();
+if(correct===4){completed[current]=true;unlocked=Math.min(4,Math.max(unlocked,current+1));say('Jawaban benar! Hebat, semua urutan sudah tepat. Pulau berhasil ditaklukkan!','good');$('checkBtn').textContent='Lanjutkan Petualangan';$('checkBtn').onclick=nextStage;renderMap();if(completed.every(Boolean))setTimeout(showFinish,1800)}
+else{say(`Jawaban salah. ${correct} dari 4 urutan sudah benar. Perbaiki kotak berwarna merah, lalu periksa lagi.`,'bad')}
+}
+function nextStage(){if(completed.every(Boolean)){showFinish();return}let n=completed.findIndex((v,i)=>!v&&i<=unlocked);if(n<0)n=unlocked; $('checkBtn').textContent='Periksa Jawaban';$('checkBtn').onclick=checkAnswers;startStage(n)}
+function showFinish(){$('gamePanel').classList.remove('show');$('mapPanel').style.display='none';$('finishPanel').style.display='block';let total=scores.reduce((a,b)=>a+b,0);$('finalScore').textContent=total;$('award').textContent='Gelar: '+(total>=150?'Master Penjelajah':total>=110?'Penjelajah Hebat':total>=70?'Penjelajah Cerdas':'Penjelajah Muda')}
+function resetStage(){placements=[null,null,null,null];selected=null;$('checkBtn').textContent='Periksa Jawaban';$('checkBtn').onclick=checkAnswers;renderGame();$('feedback').textContent='Kartu sudah diacak ulang. Coba susun kembali!'}
+function backMap(){$('gamePanel').classList.remove('show');$('mapPanel').style.display='block';$('checkBtn').textContent='Periksa Jawaban';$('checkBtn').onclick=checkAnswers;renderMap()}
+function restartAll(){unlocked=0;completed=[false,false,false,false];scores=[0,0,0,0];$('finishPanel').style.display='none';$('mapPanel').style.display='block';renderMap()}
+$('checkBtn').onclick=checkAnswers;$('resetBtn').onclick=resetStage;$('mapBtn').onclick=backMap;
+renderMap();
+</script>
+</body></html>
